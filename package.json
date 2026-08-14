@@ -1,0 +1,24 @@
+{
+  "name": "@local/dsh-model-alias",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Provider-scoped model name mapping for the pi-ai LLM adapter: the harness keeps using the DSH-facing model id (thinking levels, max tokens, context window all keyed by it) while the wire request carries the provider's real model name.",
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./rewrite": "./lib/rewrite.js",
+    "./package.json": "./package.json"
+  },
+  "type": "module",
+  "scripts": {
+    "test": "node test/unit.test.mjs && node test/smoke.test.mjs"
+  },
+  "keywords": [
+    "dsh",
+    "deepseek-harness",
+    "plugin",
+    "llm",
+    "model-alias"
+  ],
+  "license": "MIT"
+}

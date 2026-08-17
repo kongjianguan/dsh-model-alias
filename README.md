@@ -19,16 +19,20 @@ DSH 的 LLM 适配器（`dsh-llm-pi-ai` / pi-ai）把模型元数据（思考等
 ## 安装
 
 ```bash
-# 1. 把本仓库链接到 DSH 的本地插件目录（web profile 的 @local 前缀即由此解析）
-ln -s "$PWD" "$HOME/.dsh/profiles/node_modules/@local/dsh-model-alias"
+# 1. 把本仓库链接到 DSH 的本地插件目录（包名即目录名）
+ln -s "$PWD" "$HOME/.dsh/profiles/node_modules/dsh-model-alias"
 
 # 2. 在 ~/.dsh/profiles/web/cordis.patch.yml 追加：
 # - insert:
 #   - id: dsh-model-alias
-#     name: '@local/dsh-model-alias'
+#     name: 'dsh-model-alias'
 
 # 3. 重启 DSH（或等待 patch 热重载）
 ```
+
+> 早期版本以 `@local/dsh-model-alias` 链接安装；迁移到当前包名时，删除旧的
+> `~/.dsh/profiles/node_modules/@local/dsh-model-alias` 链接并把 patch 的 `name`
+> 改为 `dsh-model-alias` 即可（旧名与包名不一致会破坏 loader/HMR 的归属判定）。
 
 ## 配置
 
@@ -83,18 +87,15 @@ pnpm test        # 单元测试 + 冒烟测试（本地 mock OpenAI 端点，走
 
 ## 发布为 npm 插件
 
-仓库当前以 **本地链接** 形态工作：`package.json` 的 name 是 `@local/dsh-model-alias`（dsh 本地插件的 `@local` 命名空间约定）且 `"private": true`，两者都**不能直接 `npm publish`**。发布前按以下步骤准备：
+包名已是可发布形态（`dsh-model-alias`，无 `@local` 前缀、无 `private`，含 `repository`/`homepage` 与 `LICENSE`）。发布前只需：
 
-1. **改名并去 private**（`package.json`）：
-   - `name` 改为可发布名，如 `dsh-model-alias`（或 `@<scope>/dsh-model-alias`）；
-   - 删除 `"private": true`；
-   - 按语义化版本提升 `version`，补充 `repository` / `homepage` 字段（`license: "MIT"` 与 `LICENSE` 文件已就位）。
-2. **同步本地安装引用**（改名后这三处必须跟着改，否则本地链接安装会断）：
-   - `cordis.patch.yml` 的 `name: '@local/dsh-model-alias'` → 新包名；
-   - 本 README「安装」一节的 `ln -s` 目标目录名；
-   - `lib/client.js` 里样式标签的 `data-plugin` 属性（它携带模块 id，供 loader 与 client-hmr 的样式回收使用，必须与新包名一致）。
-3. **声明 peerDependencies**（可选但推荐，便于 npm 校验）：`@deepseek-ai/dsh-settings` 与 `@deepseek-ai/schemastery`（dsh 环境自带；缺失时插件会自动降级为 entry-config-only 模式，见 `lib/index.js` 的 `profileRequire`）。
-4. **发布**：`npm publish`（或 `pnpm publish`）。包内不含测试所需的本地路径依赖（冒烟测试的 pi-ai 引用走 profile 的 node_modules 链，仅本地测试需要）。
+1. **按语义化版本设置 `version`**（当前 `0.1.0`）。
+2. **声明 peerDependencies**（可选但推荐，便于 npm 校验）：`@deepseek-ai/dsh-settings` 与 `@deepseek-ai/schemastery`（dsh 环境自带；缺失时插件会自动降级为 entry-config-only 模式，见 `lib/index.js` 的 `profileRequire`）。
+3. **发布**：`npm publish`（或 `pnpm publish`）。
+
+本地链接安装与包名一致（`node_modules/dsh-model-alias`），发布后既可以从 npm 安装，也可以继续用链接方式开发，两条路径互不冲突。
+
+包内不含测试所需的本地路径依赖（冒烟测试的 pi-ai 引用走 profile 的 node_modules 链，仅本地测试需要）。
 
 ## 局限
 

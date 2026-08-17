@@ -34,8 +34,17 @@ ln -s "$PWD" "$HOME/.dsh/profiles/node_modules/@kongjianguan/dsh-model-alias"
 从 npm 安装（发布后，二选一，替代本地链接）：
 
 ```bash
-cd ~/.dsh/profiles/web && pnpm add @kongjianguan/dsh-model-alias
-# patch 的 name 用 '@kongjianguan/dsh-model-alias'，然后重启 DSH
+# 推荐：dsh 官方插件管理命令（把参数转发给 profile 的包管理器执行）
+dsh plugin --profile web add @kongjianguan/dsh-model-alias
+
+# 等价于在 profile 目录手动安装：
+# cd ~/.dsh/profiles/web && pnpm add @kongjianguan/dsh-model-alias
+
+# 安装后仍需在 ~/.dsh/profiles/web/cordis.patch.yml 追加：
+# - insert:
+#   - id: dsh-model-alias
+#     name: '@kongjianguan/dsh-model-alias'
+# 然后重启 DSH（或等待 patch 热重载）
 ```
 
 > 早期版本先后以 `@local/dsh-model-alias`、`dsh-model-alias` 链接安装；迁移到

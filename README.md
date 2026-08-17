@@ -31,6 +31,13 @@ ln -s "$PWD" "$HOME/.dsh/profiles/node_modules/@kongjianguan/dsh-model-alias"
 # 3. 重启 DSH（或等待 patch 热重载）
 ```
 
+从 npm 安装（发布后，二选一，替代本地链接）：
+
+```bash
+cd ~/.dsh/profiles/web && pnpm add @kongjianguan/dsh-model-alias
+# patch 的 name 用 '@kongjianguan/dsh-model-alias'，然后重启 DSH
+```
+
 > 早期版本先后以 `@local/dsh-model-alias`、`dsh-model-alias` 链接安装；迁移到
 > 当前 scoped 包名时，删除旧的 `node_modules/dsh-model-alias` 链接并把 patch 的
 > `name` 改为 `@kongjianguan/dsh-model-alias` 即可（旧名与包名不一致会破坏

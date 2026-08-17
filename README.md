@@ -19,20 +19,22 @@ DSH 的 LLM 适配器（`dsh-llm-pi-ai` / pi-ai）把模型元数据（思考等
 ## 安装
 
 ```bash
-# 1. 把本仓库链接到 DSH 的本地插件目录（包名即目录名）
-ln -s "$PWD" "$HOME/.dsh/profiles/node_modules/dsh-model-alias"
+# 1. 把本仓库链接到 DSH 的本地插件目录（scoped 包名为两级目录）
+mkdir -p "$HOME/.dsh/profiles/node_modules/@kongjianguan"
+ln -s "$PWD" "$HOME/.dsh/profiles/node_modules/@kongjianguan/dsh-model-alias"
 
 # 2. 在 ~/.dsh/profiles/web/cordis.patch.yml 追加：
 # - insert:
 #   - id: dsh-model-alias
-#     name: 'dsh-model-alias'
+#     name: '@kongjianguan/dsh-model-alias'
 
 # 3. 重启 DSH（或等待 patch 热重载）
 ```
 
-> 早期版本以 `@local/dsh-model-alias` 链接安装；迁移到当前包名时，删除旧的
-> `~/.dsh/profiles/node_modules/@local/dsh-model-alias` 链接并把 patch 的 `name`
-> 改为 `dsh-model-alias` 即可（旧名与包名不一致会破坏 loader/HMR 的归属判定）。
+> 早期版本先后以 `@local/dsh-model-alias`、`dsh-model-alias` 链接安装；迁移到
+> 当前 scoped 包名时，删除旧的 `node_modules/dsh-model-alias` 链接并把 patch 的
+> `name` 改为 `@kongjianguan/dsh-model-alias` 即可（旧名与包名不一致会破坏
+> loader/HMR 的归属判定）。
 
 ## 配置
 
@@ -87,13 +89,13 @@ pnpm test        # 单元测试 + 冒烟测试（本地 mock OpenAI 端点，走
 
 ## 发布为 npm 插件
 
-包名已是可发布形态（`dsh-model-alias`，无 `@local` 前缀、无 `private`，含 `repository`/`homepage` 与 `LICENSE`）。发布前只需：
+包名已是可发布形态（`@kongjianguan/dsh-model-alias`，无 `private`，含 `repository`/`homepage` 与 `LICENSE`）。发布前只需：
 
 1. **按语义化版本设置 `version`**（当前 `0.1.0`）。
 2. **声明 peerDependencies**（可选但推荐，便于 npm 校验）：`@deepseek-ai/dsh-settings` 与 `@deepseek-ai/schemastery`（dsh 环境自带；缺失时插件会自动降级为 entry-config-only 模式，见 `lib/index.js` 的 `profileRequire`）。
 3. **发布**：`npm publish`（或 `pnpm publish`）。
 
-本地链接安装与包名一致（`node_modules/dsh-model-alias`），发布后既可以从 npm 安装，也可以继续用链接方式开发，两条路径互不冲突。
+本地链接安装与包名一致（`node_modules/@kongjianguan/dsh-model-alias`），发布后既可以从 npm 安装，也可以继续用链接方式开发，两条路径互不冲突。
 
 包内不含测试所需的本地路径依赖（冒烟测试的 pi-ai 引用走 profile 的 node_modules 链，仅本地测试需要）。
 

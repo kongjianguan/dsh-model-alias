@@ -1,5 +1,5 @@
 {
-  "name": "dsh-model-alias",
+  "name": "@kongjianguan/dsh-model-alias",
   "version": "0.1.0",
   "description": "Provider-scoped model name mapping for the pi-ai LLM adapter: the harness keeps using the DSH-facing model id (thinking levels, max tokens, context window all keyed by it) while the wire request carries the provider's real model name.",
   "main": "lib/index.js",

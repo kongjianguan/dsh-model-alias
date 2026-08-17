@@ -81,6 +81,21 @@ pnpm test        # 单元测试 + 冒烟测试（本地 mock OpenAI 端点，走
 
 插件日志（`dsh-model-alias: <provider>/<model> requested as <wire> on the wire`）会在每个映射首次命中时输出一次；未知提供商路由会告警。
 
+## 发布为 npm 插件
+
+仓库当前以 **本地链接** 形态工作：`package.json` 的 name 是 `@local/dsh-model-alias`（dsh 本地插件的 `@local` 命名空间约定）且 `"private": true`，两者都**不能直接 `npm publish`**。发布前按以下步骤准备：
+
+1. **改名并去 private**（`package.json`）：
+   - `name` 改为可发布名，如 `dsh-model-alias`（或 `@<scope>/dsh-model-alias`）；
+   - 删除 `"private": true`；
+   - 按语义化版本提升 `version`，补充 `repository` / `homepage` 字段（`license: "MIT"` 与 `LICENSE` 文件已就位）。
+2. **同步本地安装引用**（改名后这三处必须跟着改，否则本地链接安装会断）：
+   - `cordis.patch.yml` 的 `name: '@local/dsh-model-alias'` → 新包名；
+   - 本 README「安装」一节的 `ln -s` 目标目录名；
+   - `lib/client.js` 里样式标签的 `data-plugin` 属性（它携带模块 id，供 loader 与 client-hmr 的样式回收使用，必须与新包名一致）。
+3. **声明 peerDependencies**（可选但推荐，便于 npm 校验）：`@deepseek-ai/dsh-settings` 与 `@deepseek-ai/schemastery`（dsh 环境自带；缺失时插件会自动降级为 entry-config-only 模式，见 `lib/index.js` 的 `profileRequire`）。
+4. **发布**：`npm publish`（或 `pnpm publish`）。包内不含测试所需的本地路径依赖（冒烟测试的 pi-ai 引用走 profile 的 node_modules 链，仅本地测试需要）。
+
 ## 局限
 
 - 只作用于 pi-ai 适配器（`dsh-llm-pi-ai`）服务的提供商路由；其他适配器（如官方 `dsh-llm-deepseek`）不受影响。

@@ -41,6 +41,17 @@ dsh-model-alias:
       deepseek-v4-flash: deepseek-v4-flash-0731   # DSH 看到的模型名 -> 实际请求的模型名
 ```
 
+### WebUI 设置界面
+
+插件带一个浏览器端配置页：WebUI 的 **设置 → 模型别名**（英文界面为 Model Alias，排在“插件”/OpenCode 用量之间）。页面以表格编辑 `providers` 映射（提供商路由 / DSH 侧模型名 / 线上模型名），并支持：
+
+- 增删行、逐行覆盖入口配置（`cordis.patch.yml` 提供的条目带“入口”标记，属于只读底座）；
+- **保存**：写入 `~/.dsh/settings.yaml` 的 `dsh-model-alias` 段，带修订号并发保护；无需重启，下一个请求即生效；
+- **恢复默认**：清除本机设置段，映射回到入口配置（或为空）；
+- 与并发修改冲突（其他窗口/进程改动配置）时提示重新载入后再试。
+
+浏览器端代码随插件包提供（`lib/client.js`，声明在 `dsh.client` 与 `exports["./client"]`），DSH 启动时自动注册该设置页；新增该入口后需要重启一次 DSH，让服务器发现新的 client 插件。
+
 配合 `llm-pi-ai` 的模型条目使用：DSH 侧的 `id` 保持 DSH 认知的名字，并把思考等级等元数据声明在 `reasoningEfforts` 里（pi-ai 目录按提供商路由索引，自定义路由不会自动继承目录元数据）：
 
 ```yaml

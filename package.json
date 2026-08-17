@@ -7,11 +7,17 @@
   "exports": {
     ".": "./lib/index.js",
     "./rewrite": "./lib/rewrite.js",
+    "./client": "./lib/client.js",
     "./package.json": "./package.json"
+  },
+  "dsh": {
+    "client": {
+      "platform": "web"
+    }
   },
   "type": "module",
   "scripts": {
-    "test": "node test/unit.test.mjs && node test/smoke.test.mjs"
+    "test": "node test/unit.test.mjs && node test/client-editor.test.mjs && node test/smoke.test.mjs"
   },
   "keywords": [
     "dsh",
